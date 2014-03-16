@@ -13,7 +13,7 @@ sub dispatch {
 
 # load plugins
 __PACKAGE__->load_plugins(
-    'Web::FillInFormLite',
+#    'Web::FillInFormLite',
     'Web::JSON',
     '+Owatter::Web::Plugin::Session',
 );
@@ -43,6 +43,14 @@ __PACKAGE__->add_trigger(
         # Cache control.
         $res->header( 'Cache-Control' => 'private' );
     },
+);
+
+
+__PACKAGE__->add_trigger(
+	AFTER_DISPATCH => sub {
+		my ( $c, $res ) = @_;
+
+	},
 );
 
 1;

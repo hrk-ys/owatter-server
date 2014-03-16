@@ -16,3 +16,5 @@ MYMETA.yml
 /_build/
 /local/
 /.carton/
+*.swp
+*.swo
