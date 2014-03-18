@@ -47,9 +47,28 @@ __PACKAGE__->add_trigger(
 
 
 __PACKAGE__->add_trigger(
-	AFTER_DISPATCH => sub {
-		my ( $c, $res ) = @_;
+	BEFORE_DISPATCH => sub {
+		my ( $c ) = @_;
 
+		my $user_id = $c->session->get('user_id');
+		$c->debug('session user_id:%d', $user_id);
+		return undef if ($user_id);
+
+		if ($c->req->path =~ m{^/$}
+				|| $c->req->path=~ m{^/login/$}
+				|| $c->req->path=~ m{^/login/update_session$}
+		) {
+				return;
+		}
+
+		$c->debug('auth error:%s %s', $c->req->path, $c->req->content_type);
+
+		if ($c->req->param('json') || ($c->req->content_type
+				&& $c->req->content_type =~ m{application/json})) {
+			return $c->render_json(+{ error_code => 4 });
+		} else {
+			return $c->res_404();
+		}
 	},
 );
 

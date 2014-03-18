@@ -12,6 +12,7 @@ base 'Owatter::Web::C';
 
 get '/' => 'Root#index';
 post '/login/' => 'Login#index';
+post '/login/update_session' => 'Login#update_session';
 
 
 post '/tweet/' => 'Tweet#index';

@@ -40,6 +40,7 @@ DROP TABLE IF EXISTS `message`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `message` (
   `message_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id`  int(10) unsigned NOT NULL,
   `tweet_id` int(10) unsigned NOT NULL,
   `content` varchar(140) NOT NULL,
   `created_at` int(10) unsigned NOT NULL,
@@ -57,14 +58,16 @@ DROP TABLE IF EXISTS `reply`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `reply` (
   `reply_id` int(11) NOT NULL AUTO_INCREMENT,
-  `message_id` int(10) unsigned NOT NULL,
+  `tweet_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
   `sex_type` char(1) NOT NULL,
-  `content` text,
+  `content` text NOT NULL,
   `location` geometry NOT NULL,
+  `created_at` int(10) unsigned NOT NULL,
+  `updated_at` int(10) unsigned NOT NULL,
   PRIMARY KEY (`reply_id`),
   SPATIAL KEY `location_index` (`location`),
-  KEY `i1` (`message_id`,`sex_type`,`user_id`)
+  KEY `i1` (`tweet_id`,`sex_type`,`user_id`)
 ) ENGINE=mroonga DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -96,6 +99,7 @@ CREATE TABLE `user` (
   `name` varchar(255) NOT NULL,
   `login_hash` varchar(64) NOT NULL,
   `facebook_id` bigint(20) unsigned NOT NULL,
+  `sex_type` char(1) NOT NULL,
   `created_at` int(10) unsigned NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `i0` (`facebook_id`),

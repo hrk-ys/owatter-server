@@ -13,7 +13,7 @@ sub index {
 
     my $token = $c->req->param('token');
     if ( !$token ) {
-    	$c->debug("invalid param");
+        $c->debug("invalid param");
         return $c->render_json( +{ error => 'invalid param' } );
     }
 
@@ -40,15 +40,32 @@ sub index {
             'user',
             +{
                 name        => $data->{name},
-				login_hash  => Data::UUID->new->create_str,
+                login_hash  => Data::UUID->new->create_str,
                 facebook_id => $facebook_id,
+                sex_type    => $data->{gender} eq 'male' ? 'M' : 'F',
                 created_at  => time,
             }
         );
     }
-	$c->session->set('user_id' => $user->user_id);
+    $c->session->set( 'user_id' => $user->user_id );
 
     return $c->render_json( $user->get_columns );
+}
+
+sub update_session {
+    my ( $class, $c ) = @_;
+
+    my $login_hash = $c->req->param('login_hash');
+
+    my $user = $c->db->single( 'user', +{ login_hash => $login_hash } );
+    if ( !$user ) {
+        return $c->render_json(
+            +{ error_message => '不正なアクセスです' } );
+    }
+
+    $c->session->set( 'user_id' => $user->user_id );
+    return $c->render_json( +{ ok => 1 } );
+
 }
 
 1;
