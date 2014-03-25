@@ -47,6 +47,7 @@ table {
         {name => 'user_id', type => 4},
         {name => 'content', type => 12},
         {name => 'created_at', type => 4},
+        {name => 'message_num', type => 4},
     );
 };
 

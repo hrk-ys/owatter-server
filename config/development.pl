@@ -6,6 +6,7 @@ my $dbpath = File::Spec->catfile($basedir, 'db', 'development.db');
     'DBI' => [
         "dbi:mysql:dbname=owatter", 'owatter', 'acf8m47Opy',
         +{
+            mysql_enable_utf8 => 1,
         }
     ],
 };

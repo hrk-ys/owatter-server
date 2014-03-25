@@ -82,6 +82,7 @@ CREATE TABLE `tweet` (
   `tweet_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
   `content` varchar(140) NOT NULL,
+  `message_num` tinyint unsigned not null,
   `created_at` int(10) unsigned NOT NULL,
   PRIMARY KEY (`tweet_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

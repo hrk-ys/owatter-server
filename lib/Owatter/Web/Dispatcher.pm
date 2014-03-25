@@ -10,11 +10,14 @@ useall('Owatter::Web::C');
 
 base 'Owatter::Web::C';
 
-get '/' => 'Root#index';
-post '/login/' => 'Login#index';
+get '/'                      => 'Root#index';
+post '/login/'               => 'Login#index';
 post '/login/update_session' => 'Login#update_session';
 
+post '/data_sync' => 'Root#data_sync';
 
-post '/tweet/' => 'Tweet#index';
+post '/tweet/'        => 'Tweet#index';
+post '/tweet/thanks'  => 'Tweet#thanks';
+post '/tweet/message' => 'Tweet#message';
 
 1;
