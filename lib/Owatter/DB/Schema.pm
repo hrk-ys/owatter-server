@@ -3,8 +3,19 @@ use strict;
 use warnings;
 use Teng::Schema::Declare;
 table {
+    name 'device';
+    pk 'user_id';
+    columns (
+        {name => 'user_id', type => 4},
+        {name => 'token', type => 12},
+        {name => 'is_debug', type => 4},
+        {name => 'updated_at', type => 4},
+    );
+};
+
+table {
     name 'inbox';
-    pk 'user_id','tweet_id';
+    pk 'tweet_id','user_id';
     columns (
         {name => 'user_id', type => 4},
         {name => 'tweet_id', type => 4},
@@ -59,6 +70,8 @@ table {
         {name => 'name', type => 12},
         {name => 'login_hash', type => 12},
         {name => 'facebook_id', type => 4},
+        {name => 'twitter_oauth_token', type => 12},
+        {name => 'twitter_oauth_token_secret', type => 12},
         {name => 'sex_type', type => 1},
         {name => 'created_at', type => 4},
     );

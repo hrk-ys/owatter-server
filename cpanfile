@@ -14,6 +14,10 @@ requires 'Time::Piece', '1.20';
 requires 'perl', '5.010_001';
 requires 'Log::Minimal::Instance';
 requires 'Data::UUID';
+requires 'AnyEvent::APNS';
+requires 'AnyEvent::HTTPD';
+requires 'WWW::Curl';
+requires 'Net::Twitter';
 
 on configure => sub {
     requires 'Module::Build', '0.38';

@@ -16,6 +16,22 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `device`
+--
+
+DROP TABLE IF EXISTS `device`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `device` (
+  `user_id` int(10) unsigned NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `is_debug` tinyint(3) unsigned NOT NULL,
+  `updated_at` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `inbox`
 --
 
@@ -26,7 +42,7 @@ CREATE TABLE `inbox` (
   `user_id` int(10) unsigned NOT NULL,
   `tweet_id` int(10) unsigned NOT NULL,
   `updated_at` int(10) unsigned NOT NULL,
-  PRIMARY KEY (`user_id`,`tweet_id`),
+  PRIMARY KEY (`tweet_id`,`user_id`),
   KEY `i1` (`user_id`,`updated_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -40,13 +56,13 @@ DROP TABLE IF EXISTS `message`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `message` (
   `message_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id`  int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL,
   `tweet_id` int(10) unsigned NOT NULL,
   `content` varchar(140) NOT NULL,
   `created_at` int(10) unsigned NOT NULL,
   PRIMARY KEY (`message_id`),
   KEY `i1` (`tweet_id`,`created_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,14 +77,14 @@ CREATE TABLE `reply` (
   `tweet_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
   `sex_type` char(1) NOT NULL,
-  `content` text NOT NULL,
+  `content` text,
   `location` geometry NOT NULL,
   `created_at` int(10) unsigned NOT NULL,
   `updated_at` int(10) unsigned NOT NULL,
   PRIMARY KEY (`reply_id`),
   SPATIAL KEY `location_index` (`location`),
   KEY `i1` (`tweet_id`,`sex_type`,`user_id`)
-) ENGINE=mroonga DEFAULT CHARSET=utf8;
+) ENGINE=mroonga AUTO_INCREMENT=57 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,10 +98,10 @@ CREATE TABLE `tweet` (
   `tweet_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
   `content` varchar(140) NOT NULL,
-  `message_num` tinyint unsigned not null,
   `created_at` int(10) unsigned NOT NULL,
+  `message_num` tinyint(3) unsigned NOT NULL,
   PRIMARY KEY (`tweet_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,12 +116,14 @@ CREATE TABLE `user` (
   `name` varchar(255) NOT NULL,
   `login_hash` varchar(64) NOT NULL,
   `facebook_id` bigint(20) unsigned NOT NULL,
+  `twitter_oauth_token` varchar(64) NOT NULL,
+  `twitter_oauth_token_secret` varchar(64) NOT NULL,
   `sex_type` char(1) NOT NULL,
   `created_at` int(10) unsigned NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `i0` (`facebook_id`),
   KEY `i1` (`login_hash`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -117,4 +135,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-03-14  2:49:13
+-- Dump completed on 2014-04-06  0:37:44

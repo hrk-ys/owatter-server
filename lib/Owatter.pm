@@ -6,6 +6,7 @@ use parent qw/Amon2/;
 use 5.008001;
 
 use Log::Minimal::Instance;
+use JSON::XS;
 
 __PACKAGE__->load_plugin(qw/DBI/);
 
@@ -56,6 +57,23 @@ sub debug {
         pattern  => 'debug.log.%Y%m%d',    # File::Stamped style
     );
     $log->debugf(@args);
+}
+
+my $json;
+sub json {
+	$json ||= JSON::XS->new()->utf8(1);
+	return $json;
+}
+
+sub twitter {
+    my ( $self, %args ) = @_;
+    return Net::Twitter->new(
+        traits          => [qw/API::RESTv1_1/],
+        consumer_key    => "srBnYjoP1D3YvladL7tQovqqo",
+        consumer_secret => "bImKBeLRdMi4E3TzEVMZ3vBUjTfVbEvh2flsgVJI70wq1ut5nD",
+        ssl             => 1,
+        %args
+    );
 }
 
 1;

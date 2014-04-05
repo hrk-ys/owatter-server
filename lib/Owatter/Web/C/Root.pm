@@ -37,11 +37,12 @@ sub data_sync {
         }
     );
 
-	my $update_time = 0;;
+	my $update_time = 0;
     my @tweet_ids;
+	my %tweetId2updated;
     for my $row (@rows) {
         push @tweet_ids, $row->tweet_id;
-		$update_time = $row->updated_at;
+		$tweetId2updated{ $row->tweet_id} = $update_time = $row->updated_at;
     }
 
 	$c->debug('tweet_ids : %s', \@tweet_ids);
@@ -67,10 +68,17 @@ sub data_sync {
 	$c->debug('messages : %s', \%messages);
 
 	my $ret;
-	for my $tweet_id ( keys %tweets ) {
+	for my $tweet_id ( @tweet_ids ) {
 		my $tweet = $tweets{ $tweet_id };
 		$tweet->{messages} = $messages{ $tweet_id };
+		$tweet->{updated_at} = $tweetId2updated{ $tweet_id };
 		push @{ $ret->{tweets} }, $tweet;
+
+		if ($tweet->{user_id} == $user_id) {
+			if ($tweet->{message_num} < 3 && $tweet->{messages}) {
+				$tweet->{messages}[0]{user_id} = '0';
+			}
+		}
 	}
 
 	$ret->{last_sync_time} = $update_time;

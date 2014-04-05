@@ -3,14 +3,31 @@ use strict;
 use warnings;
 use utf8;
 
+use Net::Twitter;
 use Owatter::Model::User;
+use Owatter::Model::Device;
+use Owatter::Model::Tweet;
 
 sub index {
     my ( $class, $c ) = @_;
 
     $c->debug('tweet');
-    my $tweet_message = $c->req->param('tweet');
-    my $reply_message = $c->req->param('reply');
+
+    my $user_id = $c->session->get('user_id') or die;
+
+    my $ret = Owatter::Model::Tweet->tweet(
+        $c, $user_id,
+        +{
+            tweet => $c->req->param('tweet'),
+            reply => $c->req->param('reply'),
+        },
+    );
+	$c->debug($ret);
+    return $c->render_json($ret);
+
+=pod
+    my $tweet_message = $c->req->param('tweet') || $param->{'tweet'};
+    my $reply_message = $c->req->param('reply') || $param->{'reply'};
 
     my $user_id = $c->session->get('user_id') or die;
 
@@ -27,8 +44,34 @@ sub index {
         return $c->render_json( +{ error_message => $error_message } );
     }
 
-    my $db      = $c->db;
-    my $user    = $db->single( 'user', +{ user_id => $user_id } );
+    my $db = $c->db;
+    my $user = $db->single( 'user', +{ user_id => $user_id } );
+
+    if ( !$user->twitter_oauth_token ) {
+        my $nt  = $c->twitter();
+        my $url = $nt->get_authorization_url(
+            callback => 'http://app.owatter.hrk-ys.net/api/twitter/callback' );
+
+        $c->session->set( 'request_token',        $nt->request_token );
+        $c->session->set( 'request_token_secret', $nt->request_token_secret );
+
+        $c->session->set( 'tweet', $tweet_message );
+        $c->session->set( 'reply', $reply_message );
+
+        return $c->render_json(
+            +{
+                error_message => 'Twitter認証してください',
+                redirect_url  => $url->as_string
+            }
+        );
+    }
+
+    my $nt = $c->twitter(
+        access_token        => $user->twitter_oauth_token,
+        access_token_secret => $user->twitter_oauth_token_secret,
+    );
+    $nt->update( $tweet_message . " http://bit.ly/1fGQNFs" );
+
     my $reply = $db->single(
         'reply',
         +{
@@ -74,12 +117,12 @@ sub index {
         }
     );
 
-	my $message;
+    my $message;
     if ($reply) {
         $reply->update(
             +{ tweet_id => $tweet->tweet_id, updated_at => time() } );
 
-		 $message = $db->insert(
+        $message = $db->insert(
             'message',
             +{
                 user_id    => $reply->user_id,
@@ -90,6 +133,15 @@ sub index {
         );
 
     }
+
+    $db->insert(
+        'inbox',
+        +{
+            user_id    => $user_id,
+            tweet_id   => $tweet->tweet_id,
+            updated_at => time
+        }
+    );
 
     $db->txn_commit;
 
@@ -104,15 +156,8 @@ sub index {
     }
 
     return $c->render_json($ret);
-}
+=cut
 
-sub _random_reply_message {
-    my @messages = (
-"おつかれさま!今日も一日がんばったね。帰りにアイス買っていいよ！",
-        "疲れたね。まぁそんな日もあるよね。",
-    );
-
-    return $messages[ int rand(@messages) ];
 }
 
 sub thanks {
@@ -126,10 +171,11 @@ sub thanks {
     my $db = $c->db;
     my $reply = $db->single( 'reply', +{ tweet_id => $tweet_id } );
     if ( !$reply ) {
-    	$c->debug('not found reply');
-	    my $ret = +{ message => +{ user_id => $user_id, 'content' => 'Thanks' } };
-	    Owatter::Model::User->add_user_info( $ret->{message} );
-	    return $c->render_json($ret);
+        $c->debug('not found reply');
+        my $ret =
+          +{ message => +{ user_id => $user_id, 'content' => 'Thanks' } };
+        Owatter::Model::User->add_user_info( $ret->{message} );
+        return $c->render_json($ret);
         return $c->render_json(
             +{ error_message => '不正アクセスです(1)' } );
     }
@@ -166,12 +212,15 @@ sub thanks {
         $db->insert(
             'inbox',
             +{
-                user_id   => $reply->user_id,
-                tweet_id  => $tweet_id,
+                user_id    => $reply->user_id,
+                tweet_id   => $tweet_id,
                 updated_at => time
             }
         );
         $db->txn_commit;
+
+        Owatter::Model::Device->notification( $reply->user_id,
+            'Thankされました' );
     }
     else {
         $message = $db->single(
@@ -194,8 +243,8 @@ sub message {
 
     $c->debug('message');
     my $tweet_id = $c->req->param('tweet_id');
-	my $content  = $c->req->param('content');
-    my $user_id = $c->session->get('user_id') or die;
+    my $content  = $c->req->param('content');
+    my $user_id  = $c->session->get('user_id') or die;
 
     my $error_message;
     if ( !$content || length($content) > 140 ) {
@@ -205,26 +254,25 @@ sub message {
         return $c->render_json( +{ error_message => $error_message } );
     }
 
-
     # validate
     my $db = $c->db;
-    my $tweet =
-      $db->single( 'tweet', +{ tweet_id => $tweet_id } );
+    my $tweet = $db->single( 'tweet', +{ tweet_id => $tweet_id } );
     if ( !$tweet ) {
         return $c->render_json(
             +{ error_message => '不正アクセスです(2)' } );
     }
-	my $reply = $db->single('reply', +{ tweet_id => $tweet_id });
+    my $reply = $db->single( 'reply', +{ tweet_id => $tweet_id } );
     if ( !$reply ) {
         return $c->render_json(
             +{ error_message => '不正アクセスです(3)' } );
     }
 
     my $message;
-    if ( $tweet->message_num == 2  && $reply->user_id == $user_id
-		|| $tweet->message_num == 3 && $tweet->user_id == $user_id
-	 ) {
-		my $target_user_id = $reply->user_id == $user_id ? $tweet->user_id : $reply->user_id;
+    if (   $tweet->message_num == 2 && $reply->user_id == $user_id
+        || $tweet->message_num == 3 && $tweet->user_id == $user_id )
+    {
+        my $target_user_id =
+          $reply->user_id == $user_id ? $tweet->user_id : $reply->user_id;
         $db->txn_begin;
         $message = $db->insert(
             'message',
@@ -238,22 +286,27 @@ sub message {
         $db->update(
             'tweet',
             +{
-                message_num => \'message_num+1',,
+                message_num => \'message_num+1',
+                ,
             },
             +{
                 tweet_id => $tweet_id,
             }
         );
 
-        $db->insert(
+        $db->update(
             'inbox',
             +{
-                user_id   => $target_user_id,
-                tweet_id  => $tweet_id,
                 updated_at => time
+            },
+            +{
+                tweet_id => $tweet_id,
             }
         );
         $db->txn_commit;
+
+        Owatter::Model::Device->notification( $target_user_id,
+            'メッセージを受信しました' );
     }
     else {
         $message = $db->single(

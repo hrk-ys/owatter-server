@@ -12,7 +12,7 @@ sub index {
     my ( $class, $c ) = @_;
 
     my $token = $c->req->param('token');
-    if ( !$token ) {
+    if (!$token ) {
         $c->debug("invalid param");
         return $c->render_json( +{ error => 'invalid param' } );
     }
@@ -66,6 +66,38 @@ sub update_session {
     $c->session->set( 'user_id' => $user->user_id );
     return $c->render_json( +{ ok => 1 } );
 
+}
+
+sub token {
+    my ( $class, $c ) = @_;
+
+    my $token = $c->req->param('token') or die;
+    my $is_debug = $c->req->param('is_debug') || 0;
+    my $user_id = $c->session->get('user_id') or die;
+
+    my $device = $c->db->single( 'device', +{ user_id => $user_id } );
+    if ($device) {
+        if ( $device->token ne $token ) {
+            $c->db->update(
+                'device',
+                +{ token   => $token, is_debug => $is_debug },
+                +{ user_id => $user_id },
+            );
+        }
+    }
+    else {
+        $c->db->fast_insert(
+            'device',
+            +{
+                user_id    => $user_id,
+                token      => $token,
+                is_debug   => $is_debug,
+                updated_at => time(),
+            }
+        );
+    }
+
+    return $c->render_json( +{ ok => 1 } );
 }
 
 1;
