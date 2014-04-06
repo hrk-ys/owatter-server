@@ -1,0 +1,46 @@
+<div>
+<script type="text/ng-template" id="confirmMessage.html">
+  <div class="modal-header">
+    <h3>メッセージ送信</h3>
+  </div>
+  <div class="modal-body">
+    <dl>
+    <dt>Owatterメッセージ</dt>
+    <dd>{{ tweet }}</dd>
+
+    <dt>お疲れさまメッセージ</dt>
+    <dd>{{ reply }}</dd>
+    </dl>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+  </div>
+</script>
+
+  <form name="myForm">
+    <alert ng-show="error" type="danger" close="error = undef">{{error.error_message}}</alert>
+    <div>
+    <h4>Owatterメッセージ</h4>
+      <textarea
+        class="form-control"
+        rows="3"
+        ng-model="contents.tweet"
+        required></textarea >
+    </div>
+    <div>
+      <h4>お疲れさまメッセージ</h4>
+      <textarea
+        class="form-control"
+        rows="3"
+        ng-model="contents.reply"
+        required></textarea>
+      <p>次の方へのメッセージです。あなたの考える言われてみたいメッセージを軽い気持ちで登録してみてください。</p>
+    </div>
+    <button
+      class="btn btn-info btn-block"
+      ng-click="confirmMessage()"
+      ng-disabled="myForm.$invalid"
+    >送信</button>
+  </form>
+</div>
