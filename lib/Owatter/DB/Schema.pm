@@ -70,6 +70,7 @@ table {
         {name => 'name', type => 12},
         {name => 'login_hash', type => 12},
         {name => 'facebook_id', type => 4},
+        {name => 'facebook_oauth_token', type => 12},
         {name => 'twitter_oauth_token', type => 12},
         {name => 'twitter_oauth_token_secret', type => 12},
         {name => 'sex_type', type => 1},

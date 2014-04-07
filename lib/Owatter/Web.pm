@@ -19,7 +19,7 @@ sub dispatch {
 __PACKAGE__->load_plugins(
 
     #    'Web::FillInFormLite',
-    #    'Web::JSON',
+    'Web::JSON',
     '+Owatter::Web::Plugin::Session',
 );
 
@@ -76,56 +76,13 @@ __PACKAGE__->add_trigger(
                 && $c->req->content_type =~ m{application/json} )
           )
         {
-            return $c->render_json( +{ error_code => 4 } );
+            return $c->render_json(
+                +{ error => 'auth error', error_code => 4 } );
         }
         else {
             return $c->res_404();
         }
     },
 );
-
-my %_ESCAPE = (
-    '+' => '\\u002b',    # do not eval as UTF-7
-    '<' => '\\u003c',    # do not eval as HTML
-    '>' => '\\u003e',    # ditto.
-);
-
-sub render_json {
-    my ( $c, $stuff ) = @_;
-
-    # for IE7 JSON venularity.
-    # see http://www.atmarkit.co.jp/fcoding/articles/webapp/05/webapp05a.html
-    my $output = $c->json->encode($stuff);
-    $output =~ s!([+<>])!$_ESCAPE{$1}!g;
-
-    my $user_agent = $c->req->user_agent || '';
-
-    # defense from JSON hijacking
-    if (   ( !$c->request->header('X-Requested-With') )
-        && $user_agent =~ /android/i
-        && defined $c->req->header('Cookie')
-        && ( $c->req->method || 'GET' ) eq 'GET' )
-    {
-        my $res = $c->create_response(403);
-        $res->content_type('text/html; charset=utf-8');
-        $res->content(
-"Your request may be JSON hijacking.\nIf you are not an attacker, please add 'X-Requested-With' header to each request."
-        );
-        $res->content_length( length $res->content );
-        return $res;
-    }
-
-    my $res = $c->create_response(200);
-
-    my $encoding = $c->encoding();
-    $encoding = lc( $encoding->mime_name ) if ref $encoding;
-    $res->content_type("application/json; charset=$encoding");
-    $res->header( 'X-Content-Type-Options' => 'nosniff' );    # defense from XSS
-    $res->content_length( length($output) );
-    $res->body($output);
-
-    return $res;
-}
-
 
 1;

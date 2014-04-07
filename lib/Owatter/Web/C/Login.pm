@@ -12,7 +12,7 @@ sub index {
     my ( $class, $c ) = @_;
 
     my $token = $c->req->param('token');
-    if (!$token ) {
+    if ( !$token ) {
         $c->debug("invalid param");
         return $c->render_json( +{ error => 'invalid param' } );
     }
@@ -33,19 +33,26 @@ sub index {
 
     my $facebook_id = $data->{id};
 
-    my $user = $c->db->single( 'user', +{ facebook_id => $facebook_id } );
+    my $db = $c->db;
+    my $user = $db->single( 'user', +{ facebook_id => $facebook_id } );
     if ( !$user ) {
 
-        $user = $c->db->insert(
+        $user = $db->insert(
             'user',
             +{
-                name        => $data->{name},
-                login_hash  => Data::UUID->new->create_str,
-                facebook_id => $facebook_id,
-                sex_type    => $data->{gender} eq 'male' ? 'M' : 'F',
-                created_at  => time,
+                name                 => $data->{name},
+                login_hash           => Data::UUID->new->create_str,
+                facebook_id          => $facebook_id,
+                facebook_oauth_token => $token,
+                sex_type             => $data->{gender} eq 'male' ? 'M' : 'F',
+                created_at           => time,
             }
         );
+    }
+    elsif ( !$user->facebook_oauth_token
+        || $user->facebook_oauth_token ne $token )
+    {
+        $user->update( +{ facebook_oauth_token => $token } );
     }
     $c->session->set( 'user_id' => $user->user_id );
 
