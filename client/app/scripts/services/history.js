@@ -10,6 +10,15 @@ angular.module('app').factory('history', [
     var history = {
       tweets: [],
       lastSyncTime: 0,
+      getPreview: function(hash_key) {
+        return $http.get(
+          '/api/preview?h=' + hash_key)
+        .then(function(data){
+          console.log(data.data);
+          return [data.data.tweet];
+        });
+      },
+
       getTweets: function() {
         return $http.post(
           '/api/data_sync',
@@ -29,7 +38,6 @@ angular.module('app').factory('history', [
           if (data.data.last_sync_time > history.lastSyncTime) {
             history.lastSyncTime = data.data.last_sync_time;
           }
-          console.log(history);
           return history.tweets;
         });
       },

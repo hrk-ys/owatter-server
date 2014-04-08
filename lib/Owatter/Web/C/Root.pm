@@ -6,9 +6,12 @@ use utf8;
 sub index {
     my ( $class, $c ) = @_;
 
+	$c->log->debugf('top page');
     my $counter = $c->session->get('counter') || 0;
     $counter++;
     $c->session->set( 'counter' => $counter );
+
+	return $c->redirect('http://app.owatter.hrk-ys.net/');
     return $c->render(
         'index.tx',
         {

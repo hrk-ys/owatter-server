@@ -21,6 +21,7 @@ post '/tweet/'        => 'Tweet#index';
 post '/tweet/thanks'  => 'Tweet#thanks';
 post '/tweet/message' => 'Tweet#message';
 
+get  '/api/twitter/login'    => 'Twitter#login';
 get  '/api/twitter/callback' => 'Twitter#callback';
 
 post '/api/login/'               => 'Login#index';
@@ -32,5 +33,7 @@ post '/api/data_sync' => 'Root#data_sync';
 post '/api/tweet/'        => 'Tweet#index';
 post '/api/tweet/thanks'  => 'Tweet#thanks';
 post '/api/tweet/message' => 'Tweet#message';
+
+get '/api/preview' => 'Preview#index';
 
 1;

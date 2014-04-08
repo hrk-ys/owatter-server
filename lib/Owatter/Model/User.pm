@@ -26,7 +26,8 @@ sub add_user_info {
         next unless $row;
 
         $user->{name} = $row->{name};
-        $class->add_facebook_info( $user, $row->{facebook_id} );
+        #$class->add_facebook_info( $user, $row->{facebook_id} );
+        $user->{prof_image_path} = $row->{profile_image};
     }
 }
 

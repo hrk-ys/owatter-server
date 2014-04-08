@@ -20,6 +20,10 @@ angular.module('app').controller('LoginCtrl',  [
       $scope.error = error.error;
     }
 
+    $scope.login = function() {
+      account.twitterLogin();
+    }
+
     $window.fbAsyncInit = function() {
       var FB = $window.FB;
       console.log(FB);

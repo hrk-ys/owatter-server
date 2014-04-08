@@ -2960,6 +2960,31 @@ DISTRIBUTIONS
       File::Spec 0.80
       JSON::PP 2.27200
       strict 0
+  Path-Class-0.33
+    pathname: K/KW/KWILLIAMS/Path-Class-0.33.tar.gz
+    provides:
+      Path::Class 0.33
+      Path::Class::Dir 0.33
+      Path::Class::Entity 0.33
+      Path::Class::File 0.33
+    requirements:
+      Carp 0
+      Cwd 0
+      Exporter 0
+      ExtUtils::MakeMaker 6.30
+      File::Copy 0
+      File::Path 0
+      File::Spec 3.26
+      File::Temp 0
+      File::stat 0
+      IO::Dir 0
+      IO::File 0
+      Module::Build 0.3601
+      Perl::OSType 0
+      Scalar::Util 0
+      overload 0
+      parent 0
+      strict 0
   Plack-1.0030
     pathname: M/MI/MIYAGAWA/Plack-1.0030.tar.gz
     provides:
@@ -3181,6 +3206,19 @@ DISTRIBUTIONS
       Stream::Buffered::PerlIO undef
     requirements:
       ExtUtils::MakeMaker 6.36
+  String-Random-0.26
+    pathname: S/SH/SHLOMIF/String-Random-0.26.tar.gz
+    provides:
+      String::Random 0.26
+    requirements:
+      Carp 0
+      Exporter 0
+      Module::Build 0.36
+      Test::More 0
+      perl 5.006
+      strict 0
+      vars 0
+      warnings 0
   Sub-Exporter-0.987
     pathname: R/RJ/RJBS/Sub-Exporter-0.987.tar.gz
     provides:
@@ -3297,6 +3335,23 @@ DISTRIBUTIONS
       Test::Requires 0
       Test::SharedFork 0.15
       parent 0
+  Test-Class-0.41
+    pathname: R/RJ/RJBS/Test-Class-0.41.tar.gz
+    provides:
+      Test::Class 0.41
+      Test::Class::Load 0.41
+      Test::Class::MethodInfo 0.41
+    requirements:
+      Attribute::Handlers 0.77
+      IO::File 1.09
+      MRO::Compat 0.11
+      Storable 2.04
+      Test::Builder 0.78
+      Test::Builder::Tester 1.02
+      Test::Exception 0.25
+      Test::More 0.78
+      Test::Simple 0.78
+      perl 5.008001
   Test-Differences-0.61
     pathname: O/OV/OVID/Test-Differences-0.61.tar.gz
     provides:
@@ -3403,6 +3458,27 @@ DISTRIBUTIONS
       Module::Build 0.38
       Test::More 0.96
       perl 5.008001
+  Test-MockObject-1.20140328
+    pathname: C/CH/CHROMATIC/Test-MockObject-1.20140328.tar.gz
+    provides:
+      Test::MockObject 1.20140328
+      Test::MockObject::Extends 1.20140328
+    requirements:
+      CGI 0
+      Carp 0
+      Devel::Peek 0
+      ExtUtils::MakeMaker 6.30
+      Hash::Util 0
+      Scalar::Util 0
+      Test::Builder 0
+      Test::Exception 0.31
+      Test::More 0.98
+      Test::Warn 0.23
+      UNIVERSAL::can 1.20110617
+      UNIVERSAL::isa 1.20110614
+      fields 0
+      strict 0
+      warnings 0
   Test-Name-FromLine-0.11
     pathname: S/SA/SATOH/Test-Name-FromLine-0.11.tar.gz
     provides:
@@ -3591,6 +3667,42 @@ DISTRIBUTIONS
       constant 0
       strict 0
       warnings 0
+  UNIVERSAL-can-1.20140328
+    pathname: C/CH/CHROMATIC/UNIVERSAL-can-1.20140328.tar.gz
+    provides:
+      Test::SmallWarn undef
+      UNIVERSAL::can 1.20140328
+    requirements:
+      ExtUtils::MakeMaker 6.30
+      Scalar::Util 0
+      strict 0
+      vars 0
+      warnings 0
+      warnings::register 0
+  UNIVERSAL-isa-1.20120726
+    pathname: C/CH/CHROMATIC/UNIVERSAL-isa-1.20120726.tar.gz
+    provides:
+      UNIVERSAL::isa 1.20120726
+    requirements:
+      CGI 0
+      ExtUtils::MakeMaker 6.30
+      Scalar::Util 0
+      Test::More 0
+      UNIVERSAL 0
+      overload 0
+      strict 0
+      vars 0
+      warnings 0
+      warnings::register 0
+  UNIVERSAL-require-0.16
+    pathname: N/NE/NEILB/UNIVERSAL-require-0.16.tar.gz
+    provides:
+      UNIVERSAL 0.16
+      UNIVERSAL::require 0.16
+    requirements:
+      ExtUtils::MakeMaker 0
+      Test::More 0.47
+      perl 5.006
   URI-1.60
     pathname: G/GA/GAAS/URI-1.60.tar.gz
     provides:
@@ -3718,6 +3830,43 @@ DISTRIBUTIONS
       Fcntl 0
       URI 1.10
       perl 5.008001
+  WebService-Bitly-0.06
+    pathname: S/SH/SHIBAZAKI/WebService-Bitly-0.06.tar.gz
+    provides:
+      WebService::Bitly 0.06
+      WebService::Bitly::Entry undef
+      WebService::Bitly::Result undef
+      WebService::Bitly::Result::BitlyProDomain undef
+      WebService::Bitly::Result::Clicks undef
+      WebService::Bitly::Result::ClicksByDay undef
+      WebService::Bitly::Result::ClicksByMinute undef
+      WebService::Bitly::Result::Countries undef
+      WebService::Bitly::Result::Expand undef
+      WebService::Bitly::Result::HTTPError undef
+      WebService::Bitly::Result::Info undef
+      WebService::Bitly::Result::Lookup undef
+      WebService::Bitly::Result::Referrers undef
+      WebService::Bitly::Result::Shorten undef
+      WebService::Bitly::Result::Validate undef
+      WebService::Bitly::Util undef
+    requirements:
+      Carp 0
+      Class::Accessor::Fast 0
+      Exporter 0
+      ExtUtils::MakeMaker 6.42
+      File::Basename 0
+      FindBin 0
+      HTTP::Response 0
+      JSON 0
+      LWP::UserAgent 0
+      Path::Class 0
+      Test::Class 0
+      Test::Exception 0
+      Test::MockObject::Extends 0
+      Test::More 0
+      UNIVERSAL::require 0
+      URI 0
+      URI::QueryParam 0
   common-sense-3.72
     pathname: M/ML/MLEHMANN/common-sense-3.72.tar.gz
     provides:

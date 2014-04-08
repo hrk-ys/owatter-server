@@ -48,15 +48,18 @@ sub db {
 
 my $log;
 
-sub debug {
-    my ( $self, @args ) = @_;
-
-    local $Log::Minimal::AUTODUMP = 1;
-    $log = Log::Minimal::Instance->new(
+sub log {
+    $Log::Minimal::AUTODUMP = 1;
+    $log ||= Log::Minimal::Instance->new(
         base_dir => 'var/log',
         pattern  => 'debug.log.%Y%m%d',    # File::Stamped style
     );
-    $log->debugf(@args);
+	return $log;
+}
+sub debug {
+    my ( $self, @args ) = @_;
+
+	$self->log->debugf(@args);
 }
 
 my $json;

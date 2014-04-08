@@ -8,8 +8,23 @@ use Furl;
 use JSON::XS;
 use Data::UUID;
 
+sub format_user {
+	my ($class, $user) = @_;
+
+	my $ret = $user->get_columns();
+	delete $ret->{$_} for qw/twitter_id facebook_oauth_token facebook_id sex_type twitter_oauth_token twitter_oauth_token_secret /;
+
+	return $ret;
+}
+
+
 sub index {
     my ( $class, $c ) = @_;
+
+	if (my $user_id = $c->session->get('user_id')) {
+    	my $user = $c->db->single( 'user', +{ user_id => $user_id } );
+    	return $c->render_json( $class->format_user( $user )  );
+	}
 
     my $token = $c->req->param('token');
     if ( !$token ) {
@@ -62,6 +77,11 @@ sub index {
 sub update_session {
     my ( $class, $c ) = @_;
 
+	if (my $user_id = $c->session->get('user_id')) {
+    	my $user = $c->db->single( 'user', +{ user_id => $user_id } );
+    	return $c->render_json( $class->format_user( $user )  );
+	}
+
     my $login_hash = $c->req->param('login_hash');
 
     my $user = $c->db->single( 'user', +{ login_hash => $login_hash } );
@@ -71,7 +91,9 @@ sub update_session {
     }
 
     $c->session->set( 'user_id' => $user->user_id );
-    return $c->render_json( +{ ok => 1 } );
+	my $ret = $class->format_user( $user );
+
+    return $c->render_json( +{ ok => 1, %$ret } );
 
 }
 

@@ -8,10 +8,15 @@ angular
     'ngRoute',
     'angularLocalStorage',
     'ui.bootstrap',
+    'chieffancypants.loadingBar',
+    'ngAnimate'
   ])
   .config(['$locationProvider', '$routeProvider', function ($locationProvider, $routeProvider) {
     $locationProvider.html5Mode(true);
     $routeProvider.otherwise({ redirectTo: '/' });
+  }])
+  .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+    cfpLoadingBarProvider.includeBar = false;
   }])
 
   .constant('INIT_TWEET', {
@@ -42,15 +47,21 @@ angular
     };
   }])
 
-  .run(['$log', '$rootScope', '$location', '$route', 'account',
-        function($log, $rootScope, $location, $route, account) {
+  .run(['cfpLoadingBar', '$log', '$rootScope', '$location', '$route', 'account',
+        function(cfpLoadingBar, $log, $rootScope, $location, $route, account) {
 
     $log.log('run');
 
     $rootScope.$on('$routeChangeStart', function(ev, next, current){
-      $log.log(ev, next, current);
+      $log.log('routeChangeStart');
+      console.log(ev);
+      console.log(next);
+      console.log(current);
+      console.log($location.path());
 
-      if (next.controller === 'LoginCtrl')
+      if ($location.path().match(/^\/p\//)) {
+        console.log('preview ctrl');
+      } else if (next.controller === 'LoginCtrl')
       {
         if (account.isAuthenticated())
         {

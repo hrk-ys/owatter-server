@@ -1,15 +1,3 @@
- <div id="fb-root"></div>
-    <script>
-
-      (function(d, s, id){
-         var js, fjs = d.getElementsByTagName(s)[0];
-         if (d.getElementById(id)) {return;}
-         js = d.createElement(s); js.id = id;
-         js.src = "//connect.facebook.net/ja_JP/all.js";
-         fjs.parentNode.insertBefore(js, fjs);
-       }(document, 'script', 'facebook-jssdk'));
-
-    </script>
 <div>
 <!--
 	<button onClick="facebookLogin()">sign up</button>
@@ -17,9 +5,8 @@
 <div ng-show="showLoginForm">
   <h4>Owatterへようこそ</h4>
   <div ng-show="error" class="alert alert-danger">{{ error }}</div>
-  <fb:login-button show-faces="true" width="200" max-rows="1"></fb:login-button>
-  <p>Facebookの名前、プロフィール写真を取得します。</p>
-  <p>※フォールに投稿する事はありません。</p>
+
+  <div style="margin:30px"><button class="btn btn-info" ng-click="login()">Twitterでログインする</button></div>
 
   <div ng-include="'views/description.html'"></div>
 </div>

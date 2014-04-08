@@ -18,6 +18,7 @@ requires 'AnyEvent::APNS';
 requires 'AnyEvent::HTTPD';
 requires 'WWW::Curl';
 requires 'Net::Twitter';
+requires 'String::Random';
 
 on configure => sub {
     requires 'Module::Build', '0.38';

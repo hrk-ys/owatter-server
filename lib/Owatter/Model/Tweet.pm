@@ -7,6 +7,10 @@ use utf8;
 use Owatter;
 use Owatter::Model::User;
 
+use URI::Escape;
+use String::Random;
+use WWW::Curl::Easy;
+
 sub tweet {
     my ( $class, $c, $user_id, $args ) = @_;
 
@@ -44,12 +48,6 @@ sub tweet {
         };
     }
 
-    my $nt = $c->twitter(
-        access_token        => $user->twitter_oauth_token,
-        access_token_secret => $user->twitter_oauth_token_secret,
-    );
-    $nt->update( $tweet_message . " http://bit.ly/1fGQNFs" );
-
     my $reply = $db->single(
         'reply',
         +{
@@ -71,6 +69,7 @@ sub tweet {
         );
     }
 
+	my $hash_key = String::Random->new->randregex('[A-Z0-9]{10}');
     $db->txn_begin;
     my $tweet = $db->insert(
         'tweet',
@@ -79,6 +78,7 @@ sub tweet {
             content     => $tweet_message,
             message_num => 1,
             created_at  => time(),
+			hash_key    => $hash_key,
         }
     );
 
@@ -124,6 +124,16 @@ sub tweet {
     $db->txn_commit;
 
     my $ret = +{ tweet => $tweet->{row_data} };
+
+	my $tweet_id = $tweet->tweet_id;
+	my $url = $class->bitly_url( "http://app.owatter.hrk-ys.net/p/$hash_key" );
+    my $nt = $c->twitter(
+        access_token        => $user->twitter_oauth_token,
+        access_token_secret => $user->twitter_oauth_token_secret,
+    );
+    $nt->update( $tweet_message . " " . $url );
+
+
     Owatter::Model::User->add_user_info( $ret->{tweet} );
     if ($message) {
         $ret->{message} = $message->{row_data};
@@ -134,6 +144,33 @@ sub tweet {
     }
 
     return $ret;
+}
+
+sub bitly_url {
+    my ( $class, $url ) = @_;
+
+    my $token = 'ceee16f1bc9c8553b4ce4d84ef677462f72e1f33';
+
+    my $curl = WWW::Curl::Easy->new;
+
+    $curl->setopt( CURLOPT_HEADER, 0 );
+    $curl->setopt( CURLOPT_URL,
+        "https://api-ssl.bitly.com/shorten?access_token=$token&longUrl="
+          . uri_escape($url) );
+
+    my $response_body;
+    $curl->setopt( CURLOPT_WRITEDATA, \$response_body );
+
+    # Starts the actual request
+    my $retcode = $curl->perform;
+
+    if ( !$retcode ) {
+        my $ret = JSON::XS->new->utf8->decode($response_body);
+        return $ret->{results}{$url}{shortUrl}
+          if $ret->{results}{$url}{shortUrl};
+    }
+
+    return $url;
 }
 
 sub _random_reply_message {

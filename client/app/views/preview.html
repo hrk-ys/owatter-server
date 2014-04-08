@@ -1,0 +1,90 @@
+<style>
+.media-content {
+  padding-bottom: 10px;
+}
+.prof-image {
+  width: 45px;
+  height: 45px;
+  border: thin solid #cce;
+  border-radius: 2px;        /* CSS3草案 */  
+  -webkit-border-radius: 2px;    /* Safari,Google Chrome用 */  
+  -moz-border-radius: 2px;
+  text-align:center;
+  display: table-cell;
+  vertical-align: middle;
+}
+.prof-image p {
+  display: inline-block;
+  text-align: left;
+  margin: 0px;
+  color: #cce;
+  font-size: 9px;
+}
+</style>
+<ul class="media-list" ng-repeat="tweet in tweets">
+  <li class="media">
+    <small>
+      {{ tweet.created_at * 1000 | date:'yyyy-MM-dd HH:mm' }}
+    </small>
+    <a class="pull-left" href="#">
+      <img class="media-object" ng-src="{{ tweet.prof_image_path }}" width="45">
+    </a>
+
+    <div class="media-body">
+      <h4 class="media-heading">{{ tweet.name }}</h4>
+      <div class="media-content">
+      {{ tweet.content }}
+      </div>
+
+           <ul class="media-list" ng-repeat="message in tweet.messages">
+             <li class="media">
+               <small>
+                 {{ message.created_at * 1000 | date:'yyyy-MM-dd HH:mm' }}
+               </small>
+               <a class="pull-left" href="#" ng-if="!!message.prof_image_path" >
+                 <img class="prof-image media-object" ng-src="{{ message.prof_image_path }}" width="45">
+               </a>
+               <div class="pull-left" ng-if="!message.prof_image_path">
+                 <div class="prof-image dummy-media-object"><p>Owatter</p></div>
+               </div>
+           
+               <div class="media-body">
+                 <h4 class="media-heading">{{ message.name }}</h4>
+                 <div class="media-content">
+                 {{ message.content }}
+                 </div>
+
+               </div>
+             </li>
+           </ul>
+
+
+          <!-- メッセージ -->
+          <div ng-show="canMessage(tweet)" >
+            <table width="100%"><tr><td>
+            <textarea
+              class="form-control"
+              rows="1"
+              ng-model="tweet.reply"
+              required></textarea></td><td>
+            <a class="btn btn-info" ng-click="messageSend(tweet)">送信</a>
+              </td></tr></table>
+          </div>
+
+    </div>
+  </li>
+</ul>
+
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Owatter メイン -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1525765559709019"
+     data-ad-slot="9332823342"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+
+<div ng-include="'views/description.html'"></div>

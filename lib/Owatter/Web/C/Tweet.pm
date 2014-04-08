@@ -11,7 +11,7 @@ use Owatter::Model::Tweet;
 sub index {
     my ( $class, $c ) = @_;
 
-    $c->debug('tweet');
+    $c->log->debugf('tweet');
 
     my $user_id = $c->session->get('user_id') or die;
 
@@ -22,7 +22,7 @@ sub index {
             reply => $c->req->param('reply'),
         },
     );
-	$c->debug($ret);
+	$c->log->debugf($ret);
     return $c->render_json($ret);
 
 }
@@ -30,7 +30,7 @@ sub index {
 sub thanks {
     my ( $class, $c ) = @_;
 
-    $c->debug('thanks');
+    $c->log->debugf('thanks');
     my $tweet_id = $c->req->param('tweet_id');
     my $user_id = $c->session->get('user_id') or die;
 
@@ -38,7 +38,7 @@ sub thanks {
     my $db = $c->db;
     my $reply = $db->single( 'reply', +{ tweet_id => $tweet_id } );
     if ( !$reply ) {
-        $c->debug('not found reply');
+        $c->log->debugf('not found reply');
         my $ret =
           +{ message => +{ user_id => $user_id, 'content' => 'Thanks' } };
         Owatter::Model::User->add_user_info( $ret->{message} );
@@ -108,7 +108,7 @@ sub thanks {
 sub message {
     my ( $class, $c ) = @_;
 
-    $c->debug('message');
+    $c->log->debugf('message');
     my $tweet_id = $c->req->param('tweet_id');
     my $content  = $c->req->param('content');
     my $user_id  = $c->session->get('user_id') or die;

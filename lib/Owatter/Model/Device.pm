@@ -29,8 +29,8 @@ sub notification {
     my $retcode = $curl->perform;
 
 	my $c = Owatter->bootstrap();
-	$c->debug("retcode:$retcode");
-	$c->debug("response:" . $response_body || '');
+	$c->log->debugf("retcode:$retcode");
+	$c->log->debugf("response:" . $response_body || '');
 }
 
 1;

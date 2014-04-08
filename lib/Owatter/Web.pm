@@ -56,10 +56,12 @@ __PACKAGE__->add_trigger(
         my ($c) = @_;
 
         my $user_id = $c->session->get('user_id');
-        $c->debug( 'session user_id:%d', $user_id );
         return undef if ($user_id);
 
         if (   $c->req->path =~ m{^/$}
+            || $c->req->path =~ m{^/api/preview}
+            || $c->req->path =~ m{^/api/twitter/login}
+            || $c->req->path =~ m{^/api/twitter/callback}
             || $c->req->path =~ m{^/login/$}
             || $c->req->path =~ m{^/login/update_session$}
             || $c->req->path =~ m{^/api/login/$}
@@ -68,7 +70,7 @@ __PACKAGE__->add_trigger(
             return;
         }
 
-        $c->debug( 'auth error:%s %s', $c->req->path, $c->req->content_type );
+        $c->log->debugf( 'auth error:%s %s', $c->req->path, $c->req->content_type );
 
         if (
             $c->req->param('json')

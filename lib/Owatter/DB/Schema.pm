@@ -59,6 +59,7 @@ table {
         {name => 'content', type => 12},
         {name => 'created_at', type => 4},
         {name => 'message_num', type => 4},
+        {name => 'hash_key', type => 12},
     );
 };
 
@@ -68,9 +69,11 @@ table {
     columns (
         {name => 'user_id', type => 4},
         {name => 'name', type => 12},
+        {name => 'profile_image', type => 12},
         {name => 'login_hash', type => 12},
         {name => 'facebook_id', type => 4},
         {name => 'facebook_oauth_token', type => 12},
+        {name => 'twitter_id', type => 4},
         {name => 'twitter_oauth_token', type => 12},
         {name => 'twitter_oauth_token_secret', type => 12},
         {name => 'sex_type', type => 1},
